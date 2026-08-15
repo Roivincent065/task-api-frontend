@@ -20,15 +20,25 @@ async function loadTasks() {
 
         taskList.innerHTML = tasks.map(task => `
             <li>
-                <span>${task.title}</span>
+                <span class="task-title">
+                    ${task.title}
+                </span>
 
-                <button onclick="editTask(${task.id}, '${task.title.replace(/'/g, "\\'")}')">
-                    Edit
-                </button>
+                <div class="task-actions">
+                    <button
+                        class="edit-btn"
+                        onclick="editTask(${task.id}, '${task.title.replace(/'/g, "\\'")}')"
+                    >
+                        Edit
+                    </button>
 
-                <button onclick="deleteTask(${task.id})">
-                    Delete
-                </button>
+                    <button
+                        class="delete-btn"
+                        onclick="deleteTask(${task.id})"
+                    >
+                        Delete
+                    </button>
+                </div>
             </li>
         `).join("");
 
