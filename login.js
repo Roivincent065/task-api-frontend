@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://task-api-backend-zgqe.onrender.com";
 
 const loginForm = document.querySelector("#login-form");
 const message = document.querySelector("#message");
