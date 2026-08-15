@@ -17,5 +17,23 @@
     <ul id="task-list"></ul>
   </div>
 
+  <div id="edit-modal" class="modal">
+      <div class="modal-content">
+          <h2>Edit Task</h2>
+
+          <form id="edit-task-form">
+              <input type="hidden" id="edit-task-id">
+
+              <label for="edit-title">Task Title</label>
+              <input type="text" id="edit-title" required>
+
+              <div class="modal-buttons">
+                  <button type="submit">Save Changes</button>
+                  <button type="button" id="cancel-edit">Cancel</button>
+              </div>
+          </form>
+      </div>
+  </div>
+
   <script type="module" src="./tasks.js"></script>
 </body>
