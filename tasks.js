@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutButton.addEventListener("click", () => {
         localStorage.removeItem("accessToken");
 
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     });
 
 
