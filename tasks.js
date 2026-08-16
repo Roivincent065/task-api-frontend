@@ -9,7 +9,7 @@ const editTaskId = document.querySelector("#edit-task-id");
 const editTitle = document.querySelector("#edit-title");
 const cancelEdit = document.querySelector("#cancel-edit");
 
-const logoutButton = document.querySelector("#logout");
+const logoutButton = document.querySelector("#logout-button");
 
 
 // ===================== LOAD TASKS =====================
