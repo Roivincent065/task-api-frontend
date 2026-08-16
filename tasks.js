@@ -11,6 +11,7 @@ const cancelEdit = document.querySelector("#cancel-edit");
 
 const logoutButton = document.querySelector("#logout");
 
+
 // ===================== LOAD TASKS =====================
 
 async function loadTasks() {
@@ -19,34 +20,49 @@ async function loadTasks() {
 
         const data = await response.json();
 
+        console.log("Tasks received:", data);
+
         if (!response.ok) {
             console.error("Failed to load tasks:", data);
             return;
         }
 
-        taskList.innerHTML = data.map(task => `
-            <li class="task-item">
-                <span class="task-title">
-                    ${task.title}
-                </span>
+        taskList.innerHTML = "";
+
+        data.forEach(task => {
+            const li = document.createElement("li");
+
+            li.className = "task-item";
+
+            li.innerHTML = `
+                <span class="task-title"></span>
 
                 <div class="task-actions">
-                    <button
-                        class="edit-btn"
-                        onclick="openEditModal(${task.id}, '${task.title.replace(/'/g, "\\'")}')"
-                    >
+                    <button class="edit-btn">
                         Edit
                     </button>
 
-                    <button
-                        class="delete-btn"
-                        onclick="deleteTask(${task.id})"
-                    >
+                    <button class="delete-btn">
                         Delete
                     </button>
                 </div>
-            </li>
-        `).join("");
+            `;
+
+            li.querySelector(".task-title").textContent =
+                task.title;
+
+            li.querySelector(".edit-btn").addEventListener(
+                "click",
+                () => editTask(task.id, task.title)
+            );
+
+            li.querySelector(".delete-btn").addEventListener(
+                "click",
+                () => deleteTask(task.id)
+            );
+
+            taskList.appendChild(li);
+        });
 
     } catch (error) {
         console.error("Unable to load tasks:", error);
@@ -59,23 +75,33 @@ async function loadTasks() {
 taskForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const title = document.querySelector("#title").value.trim();
+    const title = document
+        .querySelector("#title")
+        .value
+        .trim();
 
     if (!title) {
         return;
     }
 
     try {
-        await apiFetch("/tasks", {
+        const response = await apiFetch("/tasks", {
             method: "POST",
             body: JSON.stringify({
                 title: title
             })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Unable to create task:", data);
+            return;
+        }
+
         taskForm.reset();
 
-        loadTasks();
+        await loadTasks();
 
     } catch (error) {
         console.error("Unable to create task:", error);
@@ -85,12 +111,14 @@ taskForm.addEventListener("submit", async (event) => {
 
 // ===================== OPEN EDIT MODAL =====================
 
-window.editTask = function (id, title) {
+function editTask(id, title) {
     editTaskId.value = id;
     editTitle.value = title;
 
     editModal.classList.add("show");
-};
+
+    editTitle.focus();
+}
 
 
 // ===================== UPDATE TASK =====================
@@ -106,18 +134,25 @@ editForm.addEventListener("submit", async (event) => {
     }
 
     try {
-        await apiFetch(`/tasks/${id}`, {
+        const response = await apiFetch(`/tasks/${id}`, {
             method: "PUT",
             body: JSON.stringify({
                 title: title
             })
         });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Unable to update task:", data);
+            return;
+        }
+
         editModal.classList.remove("show");
 
         editForm.reset();
 
-        loadTasks();
+        await loadTasks();
 
     } catch (error) {
         console.error("Unable to update task:", error);
@@ -145,24 +180,32 @@ editModal.addEventListener("click", (event) => {
 
 // ===================== DELETE TASK =====================
 
-window.deleteTask = async function (id) {
+async function deleteTask(id) {
     try {
-        await apiFetch(`/tasks/${id}`, {
+        const response = await apiFetch(`/tasks/${id}`, {
             method: "DELETE"
         });
 
-        loadTasks();
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Unable to delete task:", data);
+            return;
+        }
+
+        await loadTasks();
 
     } catch (error) {
         console.error("Unable to delete task:", error);
     }
-};
+}
 
 
 // ===================== LOGOUT =====================
 
 logoutButton.addEventListener("click", () => {
     localStorage.removeItem("accessToken");
+
     window.location.href = "login.html";
 });
 
