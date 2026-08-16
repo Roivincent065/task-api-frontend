@@ -16,10 +16,16 @@ const logoutButton = document.querySelector("#logout");
 async function loadTasks() {
     try {
         const response = await apiFetch("/tasks");
-        const tasks = await response.json();
 
-        taskList.innerHTML = tasks.map(task => `
-            <li>
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("Failed to load tasks:", data);
+            return;
+        }
+
+        taskList.innerHTML = data.map(task => `
+            <li class="task-item">
                 <span class="task-title">
                     ${task.title}
                 </span>
@@ -27,7 +33,7 @@ async function loadTasks() {
                 <div class="task-actions">
                     <button
                         class="edit-btn"
-                        onclick="editTask(${task.id}, '${task.title.replace(/'/g, "\\'")}')"
+                        onclick="openEditModal(${task.id}, '${task.title.replace(/'/g, "\\'")}')"
                     >
                         Edit
                     </button>
